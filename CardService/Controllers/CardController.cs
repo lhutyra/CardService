@@ -13,16 +13,22 @@ namespace CardService.Controllers
             _cardService = new CardService();
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("actions")]
-        public IActionResult GetCardActions([FromBody] CardDetails cardDetails)
+        public IActionResult GetCardActions([FromQuery] string userId, [FromQuery] string cardNumber)
         {
-            if (cardDetails == null)
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(cardNumber))
             {
-                return BadRequest("Invalid card details");
+                return BadRequest("User ID and Card Number are required");
             }
 
-            var actions = _cardService.GetActions(cardDetails.CardType, cardDetails.CardStatus, cardDetails.IsPinSet);
+            var cardDetails = _cardService.GetCardDetails(userId, cardNumber);
+            if (cardDetails == null)
+            {
+                return NotFound("Card not found");
+            }
+
+            var actions = _cardService.GetActions(cardDetails);
             return Ok(actions);
         }
     }

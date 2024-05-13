@@ -1,4 +1,4 @@
-﻿namespace CardService
+﻿namespace CardService.Card
 {
     public enum CardType
     {
