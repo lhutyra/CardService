@@ -1,35 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CardService.Card;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CardService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class CardController : ControllerBase
+    [Route("api/[controller]")]
+    public class UserActionsController : ControllerBase
     {
-        private readonly CardService _cardService;
 
-        public CardController()
+
+        [HttpPost]
+        public IActionResult GetAllowedActions([FromBody] UserCardRequest request)
         {
-            _cardService = new CardService();
-        }
-
-        [HttpGet]
-        [Route("actions")]
-        public IActionResult GetCardActions([FromQuery] string userId, [FromQuery] string cardNumber)
-        {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(cardNumber))
-            {
-                return BadRequest("User ID and Card Number are required");
-            }
-
-            var cardDetails = _cardService.GetCardDetails(userId, cardNumber);
-            if (cardDetails == null)
-            {
-                return NotFound("Card not found");
-            }
-
-            var actions = _cardService.GetActions(cardDetails);
+            var actions = GenerateAllowedActions(request.UserId, request.CardNumber);
             return Ok(actions);
         }
+
+        private List<string> GenerateAllowedActions(string userId, string cardNumber)
+        {
+            // Implement logic to generate allowed actions based on userId and cardNumber
+            return new List<string> { "Action1", "Action2" };
+        }
     }
+
 }
