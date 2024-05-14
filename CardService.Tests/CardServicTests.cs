@@ -1,10 +1,12 @@
-using System.Collections.Generic;
-using CardService.Card;
 using Xunit;
+using Moq;
+using CardService.Card;
+using CardService.Controllers;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CardService.Tests
 {
-
     public class CardServiceTests
     {
         private readonly CardService _cardService;
@@ -33,7 +35,7 @@ namespace CardService.Tests
         public async Task GetCardDetails_ShouldReturnNull_WhenCardDoesNotExist()
         {
             // Act
-            var cardDetails = await _cardService.GetCardDetails("user999", "card999");
+            var cardDetails =await _cardService.GetCardDetails("user999", "card999");
 
             // Assert
             Assert.Null(cardDetails);
@@ -44,7 +46,7 @@ namespace CardService.Tests
         public async Task GetActions_ShouldReturnCorrectActions(string userId, string cardNumber, string[] expectedActions)
         {
             // Arrange
-            var cardDetails = await _cardService.GetCardDetails(userId, cardNumber);
+            var cardDetails =await _cardService.GetCardDetails(userId, cardNumber);
 
             // Act
             var actions = _cardService.GetActions(cardDetails);
@@ -54,20 +56,13 @@ namespace CardService.Tests
         }
 
         [Fact]
-        public async Task GetActions_ShouldReturnEmptyList_WhenCardDetailsAreNull()
+        public void GetActions_ShouldReturnEmptyList_WhenCardDetailsAreNull()
         {
-            // Arrange
-            var cardDetails = new CardDetails("user1", "nonexistent", CardType.Prepaid, CardStatus.Closed, false);
-
             // Act
-            var card = await _cardService.GetCardDetails("user1", "nonexisten");
-            var actions = _cardService.GetActions(card);
+            var actions = _cardService.GetActions(null);
 
             // Assert
             Assert.Empty(actions);
         }
     }
-
-
-
 }
